@@ -1,176 +1,324 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monthly Calendar with Notes</title
-     <link rel="icon" href="/Bandy" type="image/x-icon">                                                
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 20px;
-        }
-        h1 {
-            margin: 10px;
-        }
-        .navigation {
-            margin: 20px;
-        }
-        .date-display {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 20px;
-        }
-        table {
-            border-collapse: collapse;
-            margin: auto;
-            width: 90%;
-        }
-        th, td {
-            border: 1px solid #aaa;
-            padding: 10px;
-            width: 12%;
-            height: 100px; /* Increased height for text area */
-            text-align: center;
-            vertical-align: top;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        td {
-            position: relative;
-        }
-        .today {
-            background-color: #ffeb3b;
-        }
-        textarea {
-            width: 95%;
-            height: 60px;
-            resize: none;
-            margin-top: 5px;
-            font-size: 12px;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agenda Calendario – Daily & Monthly Notes</title>
+  <style>
+    /* Global styles */
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 1px;
+    }
+    h1 {
+      margin: 1px;
+      font-size: 20px;
+    }
+    .navigation {
+      margin: 1px;
+    }
+    .date-display {
+      font-size: 20px;
+      font-weight: bold;
+      margin-bottom: 6px;
+    }
+    table {
+      border-collapse: collapse;
+      margin: auto;
+      width: 100%;
+    }
+    th {
+      background-color: #f2f2f2;
+      width: 1%;
+      padding: 1px;
+    }
+    td {
+      border: 1px solid #aaa;
+      width: 1px;
+      height: 100px;
+      text-align: center;
+      vertical-align: bottom;
+      padding: 5px 0 0 0;
+      position: relative;
+    }
+    .today {
+      background-color: #ffeb3b;
+    }
+    /* Daily text area styling (for each calendar cell) */
+    td textarea {
+      width: 93%;
+      height: 75%;
+      resize: none;
+      margin-top: 1px;
+      font-size: 12px;
+      font-family: "Microsoft Yi Baiti", sans-serif;
+      font-weight: bold;
+      overflow: hidden;
+    }
+    /* Floating monthly note editor container */
+    .floating-textarea-container {
+      position: fixed;
+      bottom: 90px; /* Positioned above the bottom container */
+      right: 20px;
+      width: 300px;
+      max-width: 80vw;
+      max-height: 50vh;
+      background: #fff;
+      border: 1px solid #aaa;
+      padding: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.3);
+      display: none;
+      z-index: 1100;
+      overflow: auto;
+    }
+    .floating-textarea-container textarea {
+      width: 100%;
+      min-height: 50px;
+      overflow: hidden;
+      resize: none;
+    }
+    #editorHeader {
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    /* Floating bottom container: holds the marquee and the button */
+    .floating-bottom-container {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      display: flex;
+      align-items: center;
+      background: transparent; /* Erased grey background */
+      padding: 5px 20px;
+      gap: 0; /* No gap for colliding effect */
+      z-index: 1050;
+    }
+    .floating-marquee {
+      flex: 1;
+    }
+    /* Marquee with a 5px solid blue border on all sides and no background */
+    .floating-marquee marquee {
+      width: 100%;
+      font-size: 16px;
+      color: #333;
+      padding: 5px 10px;
+      box-sizing: border-box;
+      border: 2px dashed #f8c471;
+      border-radius: 10px;
+      background: transparent;
+    }
+    /* Floating button styles – now 51px × 51px, transparent background, no border, 🎉 emoji, elevated by 4px */
+    .floating-button {
+      width: 51px;
+      height: 51px;
+      background-color: transparent;
+      border: none;
+      font-size: 28px;
+      color: #007BFF;
+      cursor: pointer;
+      z-index: 1100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      top: -4px; /* Elevated by 1px more than before */
+    }
+    /* Responsive fix for very small screens */
+    @media (max-width: 400px) {
+      .floating-textarea-container {
+        width: 90vw;
+        right: 5vw;
+      }
+      .floating-button {
+        width: 41px;
+        height: 41px;
+        font-size: 24px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h1>Monthly Calendar with Notes</h1>
-    <div class="navigation">
-        <button onclick="changeMonth(-1)">Previous Month</button>
-        <button onclick="goToToday()">Back to Today</button>
-        <button onclick="changeMonth(1)">Next Month</button>
-        <button onclick="Corregido.html">Correct</button>
+  <h1>Agenda Calendario Cumples</h1>
+  <div class="navigation">
+    <button onclick="changeMonth(-1)">Atras</button>
+    <button onclick="goToToday()">Hoy</button>
+    <button onclick="changeMonth(1)">Siguiente</button>
+  </div>
+  <div id="dateDisplay" class="date-display"></div>
+  <table id="calendarTable"></table>
+
+  <!-- Floating monthly note editor container -->
+  <div id="monthlyEditor" class="floating-textarea-container">
+    <div id="editorHeader">Monthly Note for <span id="editorMonth"></span></div>
+    <textarea id="monthlyNoteText" placeholder="Enter your note for this month..."></textarea>
+  </div>
+
+  <!-- Floating bottom container with marquee and button -->
+  <div class="floating-bottom-container">
+    <div class="floating-marquee">
+      <marquee id="marqueeText" behavior="scroll" direction="left">
+        <span id="marqueeMessage">[No monthly note saved]</span>
+      </marquee>
     </div>
-    <div id="dateDisplay" class="date-display"></div>
-    <table id="calendarTable"></table>
+    <button class="floating-button" onclick="toggleMonthNoteEditor()">🎉</button>
+  </div>
 
-    <script>
-        let currentYear = new Date().getFullYear();
-        let currentMonth = new Date().getMonth() + 1;
-        const monthNames = [
-            "January", "February", "March", "April", "May", "June",
-            "July", "August", "September", "October", "November", "December"
-        ];
-        const daysOfWeek = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-        const notes = JSON.parse(localStorage.getItem("calendarNotes")) || {}; // Save notes locally
-
-        function zellersCongruence(day, month, year) {
-            if (month < 3) {
-                month += 12;
-                year -= 1;
-            }
-            const K = year % 100;
-            const J = Math.floor(year / 100);
-            const h = (day + Math.floor(13 * (month + 1) / 5) + K + Math.floor(K / 4) + Math.floor(J / 4) - 2 * J) % 7;
-            return h;
+  <script>
+    // Global Calendar Variables
+    let currentYear = new Date().getFullYear();
+    let currentMonth = new Date().getMonth() + 1; // months: 1-12
+    const monthNames = [
+      "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
+      "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
+    ];
+    const daysOfWeek = ["Dom", "Lun", "Mar", "Mier", "Jue", "Vier", "Sab"];
+    
+    // Update the header showing current month and year
+    function updateDateDisplay(year, month) {
+      document.getElementById("dateDisplay").textContent = `${monthNames[month - 1]} ${year}`;
+    }
+    
+    // Get the index of the first weekday for the given month
+    function getFirstDayOfMonth(year, month) {
+      return new Date(year, month - 1, 1).getDay();
+    }
+    
+    // Generate the calendar table for the current month/year
+    function generateMonthCalendar(year, month) {
+      updateDateDisplay(year, month);
+      const daysInMonth = new Date(year, month, 0).getDate();
+      const table = document.getElementById("calendarTable");
+      table.innerHTML = "";
+    
+      // Build header row with weekday names
+      const headerRow = document.createElement("tr");
+      daysOfWeek.forEach(day => {
+        const th = document.createElement("th");
+        th.textContent = day;
+        headerRow.appendChild(th);
+      });
+      table.appendChild(headerRow);
+    
+      let row = document.createElement("tr");
+      const firstDayIndex = getFirstDayOfMonth(year, month);
+    
+      // Fill blank cells until the first day
+      for (let i = 0; i < firstDayIndex; i++) {
+        row.appendChild(document.createElement("td"));
+      }
+    
+      // Create cells for each day of the month
+      for (let day = 1; day <= daysInMonth; day++) {
+        const cell = document.createElement("td");
+    
+        // Highlight today's cell
+        const today = new Date();
+        if (
+          day === today.getDate() &&
+          month === today.getMonth() + 1 &&
+          year === today.getFullYear()
+        ) {
+          cell.classList.add("today");
         }
-
-        function updateDateDisplay(year, month) {
-            const dateDisplay = document.getElementById("dateDisplay");
-            dateDisplay.textContent = `${monthNames[month - 1]} ${year}`;
+    
+        // Display the day number at the top
+        const dayDiv = document.createElement("div");
+        dayDiv.textContent = day;
+        cell.appendChild(dayDiv);
+    
+        // Create a text area for daily birthday/note info.
+        // The key ignores the year so the information persists every year.
+        const noteKey = `birthday-${month}-${day}`;
+        const textArea = document.createElement("textarea");
+        textArea.value = localStorage.getItem(noteKey) || "";
+        textArea.oninput = () => {
+          localStorage.setItem(noteKey, textArea.value);
+        };
+        cell.appendChild(textArea);
+        row.appendChild(cell);
+    
+        // When reaching the end of a week, append the row to the table
+        if ((firstDayIndex + day) % 7 === 0) {
+          table.appendChild(row);
+          row = document.createElement("tr");
         }
-
-        function generateMonthCalendar(year, month) {
-            updateDateDisplay(year, month); // Update the date display
-            const daysInMonth = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-            if ((year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0)) {
-                daysInMonth[1] = 29; // Leap year adjustment
-            }
-            const totalDays = daysInMonth[month - 1];
-
-            const table = document.getElementById("calendarTable");
-            table.innerHTML = ""; // Clear the calendar
-
-            // Create table header
-            const headerRow = document.createElement("tr");
-            daysOfWeek.forEach(day => {
-                const th = document.createElement("th");
-                th.textContent = day;
-                headerRow.appendChild(th);
-            });
-            table.appendChild(headerRow);
-
-            let row = document.createElement("tr");
-            const firstDayIndex = (zellersCongruence(1, month, year) + 7) % 7;
-
-            for (let i = 0; i < firstDayIndex; i++) {
-                const emptyCell = document.createElement("td");
-                row.appendChild(emptyCell);
-            }
-
-            for (let day = 1; day <= totalDays; day++) {
-                const cell = document.createElement("td");
-                const today = new Date();
-                const isToday = (day === today.getDate() && month === today.getMonth() + 1 && year === today.getFullYear());
-                if (isToday) {
-                    cell.classList.add("today");
-                }
-
-                cell.innerHTML = `<div>${day}</div>`;
-                const noteKey = `${year}-${month}-${day}`;
-
-                const textArea = document.createElement("textarea");
-                textArea.value = notes[noteKey] || "";
-                textArea.oninput = () => saveNote(noteKey, textArea.value);
-
-                cell.appendChild(textArea);
-                row.appendChild(cell);
-
-                if ((firstDayIndex + day) % 7 === 0) {
-                    table.appendChild(row);
-                    row = document.createElement("tr");
-                }
-            }
-
-            if (row.children.length > 0) {
-                table.appendChild(row);
-            }
-        }
-
-        function changeMonth(change) {
-            currentMonth += change;
-            if (currentMonth > 12) {
-                currentMonth = 1;
-                currentYear += 1;
-            } else if (currentMonth < 1) {
-                currentMonth = 12;
-                currentYear -= 1;
-            }
-            generateMonthCalendar(currentYear, currentMonth);
-        }
-
-        function saveNote(noteKey, value) {
-            notes[noteKey] = value;
-            localStorage.setItem("calendarNotes", JSON.stringify(notes)); // Save notes to localStorage
-        }
-
-        function goToToday() {
-            currentYear = new Date().getFullYear();
-            currentMonth = new Date().getMonth() + 1;
-            generateMonthCalendar(currentYear, currentMonth);
-        }
-
-        generateMonthCalendar(currentYear, currentMonth);
-    </script>
+      }
+      if (row.children.length > 0) {
+        table.appendChild(row);
+      }
+    }
+    
+    // Navigation functions for changing months and returning to today
+    function changeMonth(change) {
+      currentMonth += change;
+      if (currentMonth > 12) {
+        currentMonth = 1;
+        currentYear++;
+      } else if (currentMonth < 1) {
+        currentMonth = 12;
+        currentYear--;
+      }
+      generateMonthCalendar(currentYear, currentMonth);
+      updateMarquee();
+    }
+    
+    function goToToday() {
+      currentYear = new Date().getFullYear();
+      currentMonth = new Date().getMonth() + 1;
+      generateMonthCalendar(currentYear, currentMonth);
+      updateMarquee();
+    }
+    
+    // Monthly Note Editor Functions
+    function openMonthNoteEditor() {
+      document.getElementById("monthlyEditor").style.display = "block";
+      document.getElementById("editorMonth").textContent = monthNames[currentMonth - 1];
+      document.getElementById("monthlyNoteText").value =
+        localStorage.getItem("monthlyNote-" + currentMonth) || "";
+      autoResize(document.getElementById("monthlyNoteText"));
+    }
+    
+    // Auto-save with auto-resize: as the user types, adjust height, save note, and update marquee
+    const monthlyNoteText = document.getElementById("monthlyNoteText");
+    monthlyNoteText.addEventListener("input", function() {
+      this.style.height = 'auto';
+      this.style.height = this.scrollHeight + "px";
+      localStorage.setItem("monthlyNote-" + currentMonth, this.value);
+      updateMarquee();
+    });
+    
+    function closeMonthNoteEditor() {
+      document.getElementById("monthlyEditor").style.display = "none";
+    }
+    
+    // Toggle the monthly note editor on/off. If open, auto-save & close; otherwise, open.
+    function toggleMonthNoteEditor() {
+      const editor = document.getElementById("monthlyEditor");
+      if (editor.style.display === "block") {
+        closeMonthNoteEditor();
+      } else {
+        openMonthNoteEditor();
+      }
+    }
+    
+    // Update marquee text with the saved monthly note (or default message)
+    function updateMarquee() {
+      const note = localStorage.getItem("monthlyNote-" + currentMonth);
+      const marqueeEl = document.getElementById("marqueeMessage");
+      marqueeEl.textContent = note && note.trim() !== "" ? note : "Sin cumples :,(";
+    }
+    
+    // Initial calendar generation and marquee update
+    generateMonthCalendar(currentYear, currentMonth);
+    updateMarquee();
+    
+    // Helper function to auto-resize textareas when opened
+    function autoResize(textarea) {
+      textarea.style.height = 'auto';
+      textarea.style.height = textarea.scrollHeight + "px";
+    }
+  </script>
 </body>
 </html>
