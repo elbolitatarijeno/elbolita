@@ -18,10 +18,24 @@
     .navigation {
       margin: 1px;
     }
+    .navigation button {
+    border-radius: 50px; /* Adjust the value for more or      less curvature */
+    padding: 1px 50px;
+    border: none;
+    background-color: rgb(255, 255, 210);
+    color: black;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  
+  .navigation button:hover {
+    background-color: rgb(255, 255, 165);
+  }
+
     .date-display {
-      font-size: 20px;
+      font-size: 18px;
       font-weight: bold;
-      margin-bottom: 6px;
+      margin-bottom: 1px;
     }
     table {
       border-collapse: collapse;
@@ -29,7 +43,7 @@
       width: 100%;
     }
     th {
-      background-color: #f2f2f2;
+      background-color: rgba(255, 225, 101, 0.8);
       width: 1%;
       padding: 1px;
     }
@@ -39,16 +53,16 @@
       height: 100px;
       text-align: center;
       vertical-align: bottom;
-      padding: 5px 0 0 0;
+      padding: 3.5px 0 0 0;
       position: relative;
     }
     .today {
-      background-color: #ffeb3b;
+      background-color: rgba(255, 243, 119);
     }
     /* Daily text area styling (for each calendar cell) */
     td textarea {
       width: 93%;
-      height: 75%;
+      height: 76%;
       resize: none;
       margin-top: 1px;
       font-size: 12px;
@@ -80,7 +94,7 @@
     }
     #editorHeader {
       font-weight: bold;
-      margin-bottom: 5px;
+      margin-bottom: 1px;
     }
     /* Floating bottom container: holds the marquee and the button */
     .floating-bottom-container {
@@ -91,12 +105,12 @@
       display: flex;
       align-items: center;
       background: transparent; /* Erased grey background */
-      padding: 5px 20px;
+      padding: 5px 5px;
       gap: 0; /* No gap for colliding effect */
       z-index: 1050;
     }
     .floating-marquee {
-      flex: 1;
+      flex: 2;
     }
     /* Marquee with a 5px solid blue border on all sides and no background */
     .floating-marquee marquee {
@@ -123,7 +137,7 @@
       align-items: center;
       justify-content: center;
       position: relative;
-      top: -4px; /* Elevated by 1px more than before */
+      top: -6px; /* Elevated by 1px more than before */
     }
     /* Responsive fix for very small screens */
     @media (max-width: 400px) {
@@ -141,12 +155,12 @@
 </head>
 <body>
   <h1>Agenda Calendario Cumples</h1>
+  <div id="dateDisplay" class="date-display"></div>
   <div class="navigation">
     <button onclick="changeMonth(-1)">Atras</button>
     <button onclick="goToToday()">Hoy</button>
     <button onclick="changeMonth(1)">Siguiente</button>
   </div>
-  <div id="dateDisplay" class="date-display"></div>
   <table id="calendarTable"></table>
 
   <!-- Floating monthly note editor container -->
