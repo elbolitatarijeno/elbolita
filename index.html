@@ -242,16 +242,14 @@
         dayDiv.textContent = day;
         cell.appendChild(dayDiv);
     
-        // Create a text area for daily birthday/note info.
-        // The key ignores the year so the information persists every year.
-        const noteKey = `birthday-${month}-${day}`;
+        // Updated for persistent saving only within the current year:
+        const noteKey = `note-${year}-${month}-${day}`;
         const textArea = document.createElement("textarea");
         textArea.value = localStorage.getItem(noteKey) || "";
-        textArea.oninput = () => {
+        textArea.addEventListener("input", () => {
           localStorage.setItem(noteKey, textArea.value);
-        };
-        cell.appendChild(textArea);
-        row.appendChild(cell);
+        });
+
     
         // When reaching the end of a week, append the row to the table
         if ((firstDayIndex + day) % 7 === 0) {
