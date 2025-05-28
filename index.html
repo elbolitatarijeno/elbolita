@@ -248,7 +248,9 @@
         textArea.value = localStorage.getItem(noteKey) || "";
         textArea.addEventListener("input", () => {
           localStorage.setItem(noteKey, textArea.value);
-        });
+        });	3
+        cell.appendChild(textArea);
+        row.appendChild(cell);
 
     
         // When reaching the end of a week, append the row to the table
