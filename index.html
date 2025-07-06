@@ -12,8 +12,8 @@
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-      border-radius: 10px;
-      overflow: hidden;
+      border-radius: 8px;
+      overflow: hidden;    
     }
 
     .first {
@@ -73,31 +73,31 @@
 
     .buton-container {
       display: grid;
-      grid-template-columns: 40px 40px 40px;
-      grid-template-rows: 40px 40px 40px;
+      grid-template-columns: 30px 30px 30px;
+      grid-template-rows: 30px 30px 30px;
       gap: 1px;
       position: absolute;
-      right: 3.5vh;
-      bottom: 3.5vh;
+      right: 2.6vh;
+      bottom: 2.6vh;
       transition: bottom 0.4s ease;
-      z-index: 1001;           /* above the marquee */
+      z-index: 1001;
     }
     .buton-container.shifted {
-      bottom: calc(2.6vh + 190px);
+      bottom: calc(2.6vh + 162px);
     }
     .buton {
-      width: 45px;
-      height: 45px;
+      width: 35px;
+      height: 35px;
       border-radius: 50%;
       font-size: 15px;
       font-weight: bold;
       color: white;
-      border: 0px solid grey;
+      border: none;
       cursor: pointer;
       display: flex;
       justify-content: center;
       align-items: center;
-      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.3);
+      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
       transition: filter 0.1s ease;
     }
     .x { background-color: black; grid-column: 1 / 2; grid-row: 2 / 3; }
@@ -145,7 +145,7 @@
       z-index: 1000;
       transition: border 0.2s ease;
     }
-    #bottom-bar:hover {
+      #bottom-bar:hover {
       border: 1px solid white;
     }
     #slider-panel {
@@ -153,50 +153,54 @@
       bottom: -200px;
       left: 0;
       width: 100vw;
-      height: 185px;
+      height: 163px;
       background-color: #222;
       transition: bottom 0.4s ease;
       z-index: 999;
       color: white;
+      font-family: sans-serif;
+      text-align: center;
+      padding-top: 1px;
+      box-sizing: border-box;
       font-family: 'Sprintendo', sans-serif;
       font-size: 15px;
-      text-align: center;
-      padding-top: 2px;
-      box-sizing: border-box;
     }
     #slider-panel.open {
-      bottom: 10px;
+      bottom: 10px; /* sits just above the bottom bar */
     }
 
-    /* ——— marquee cards ——— */
-    .marquee-container {
+ .marquee {
       position: absolute;
-      bottom: 13px;           /* above the   bottom bar, below buttons */
+      bottom: 13px;           
       left: 11px;
       right: 11px;
-      height: 182px;
+      height: 160px;
       overflow: hidden;
-      z-index: 998;           /* behind the button container */
+      z-index: 998;
     }
+
     .marquee-track {
       display: flex;
       gap: 40px;
-      transform: translateX(0);
+transform: translateX(0);
     }
-    .marquee-track .card {
-      min-width: 190px;
-      height: 190px;
-      background-color: rgba(74, 126, 171, 0.6);
-      border-radius: 6px;
-      overflow: hidden;
+
+    .card {
+      min-width: 200px;
+      height: 155px;
+      background: #3498db;
+      color: white;
+      display: flex;
       flex-shrink: 0;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
     }
-    .marquee-track .card img {
+
+.marquee-track .card img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-    .marquee-track .card:hover {
+   .marquee-track .card:hover {
       opacity: 0.7;
       filter: brightness(1.0);
     }
@@ -223,10 +227,15 @@
     <button class="buton b">B</button>
   </div>
 
-  <!-- marquee cards -->
-  <div class="marquee-container">
-    <div class="marquee-track">
-      <div class="card"><img src="https://www.shutterstock.com/image-photo/view-bavaro-beach-punta-cana-260nw-2445326985.jpg"></div>
+  <!-- slider panel & bottom bar -->
+  <div id="slider-panel">
+    <p>Here’s your slider content.</p>
+  </div>
+  <div id="bottom-bar"></div>
+
+  <div class="marquee" id="marquee">
+    <div class="marquee-track" id="track">
+ <div class="card"><img src="https://www.shutterstock.com/image-photo/view-bavaro-beach-punta-cana-260nw-2445326985.jpg"></div>
       <div class="card"><img src="https://www.shutterstock.com/image-photo/bavaro-punta-cana-dominican-republic-600w-2220607533.jpg"></div>
       <div class="card"><img src="https://media.istockphoto.com/id/1418736696/vector/retro-greeting-card-souvenir-sign-from-exotic-destination.jpg?s=1024x1024&w=is&k=20&c=2W9wMptzmBfpxp1fpK3TSph-daosfNK5m8-FFPSPxks=""></div>
       <div class="card"><img src="https://www.shutterstock.com/image-photo/tropical-beach-resorts-palm-trees-600w-2415287839.jpg"></div>
@@ -236,13 +245,8 @@
       <div class="card"><img src="https://www.shutterstock.com/image-photo/bavaro-punta-cana-dominican-republic-260nw-1527598181.jpg"></div>
       <div class="card"><img src="https://www.shutterstock.com/image-photo/dominican-republic-punta-cana-9-260nw-1596943021.jpg"></div>
     </div>
-  </div>
 
-  <!-- slider panel & bottom bar -->
-  <div id="slider-panel">
-    <p>Here’s your slider content.</p>
-  </div>
-  <div id="bottom-bar"></div>
+    </div>
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -332,52 +336,61 @@
         btnContainer.classList.toggle('shifted');
       });
     });
-// infinite marquee logic
-const marqueeTrack = document.querySelector('.marquee-track');
-let pos = 0;
-const speed = 1;           // pixels per frame
 
-function stepMarquee() {
-  pos -= speed;
+const marquee = document.getElementById('marquee');
+    const track = document.getElementById('track');
 
-  const firstCard = marqueeTrack.firstElementChild;
-  const cardWidth = firstCard.offsetWidth + parseInt(getComputedStyle(marqueeTrack).gap);
+    // Clone all original cards once for the looping illusion
+    track.innerHTML += track.innerHTML;
 
-  // once first card has fully scrolled past, recycle it
-  if (Math.abs(pos) >= cardWidth) {
-    pos += cardWidth;
-    marqueeTrack.appendChild(firstCard);
-  }
+    let offset = 0;
+    const speed = 2; // Pixels per frame
+    let pointerX = null;
+    let pointerY = null;
 
-  marqueeTrack.style.transform = `translateX(${pos}px)`;
-  requestAnimationFrame(stepMarquee);
-}
+    // Hover detection
+    marquee.addEventListener('mousemove', (e) => {
+      pointerX = e.clientX;
+      pointerY = e.clientY;
+    });
 
-requestAnimationFrame(stepMarquee);
+    marquee.addEventListener('mouseleave', () => {
+      pointerX = null;
+      pointerY = null;
+    });
 
-let marqueePaused = false;
-const marqueeContainer = document.querySelector('.marquee-container');
+    function isHoveringCard() {
+      if (pointerX === null || pointerY === null) return false;
 
-marqueeContainer.addEventListener('mouseenter', () => marqueePaused = true);
-marqueeContainer.addEventListener('mouseleave', () => marqueePaused = false);
-function stepMarquee() {
-  // if a card is hovered, skip moving
-  if (!document.querySelector('.marquee-track .card:hover')) {
-    pos -= speed;
-
-    const firstCard = marqueeTrack.firstElementChild;
-    const gap      = parseInt(getComputedStyle(marqueeTrack).gap, 10);
-    const cardWidth = firstCard.offsetWidth + gap;
-
-    if (Math.abs(pos) >= cardWidth) {
-      pos += cardWidth;
-      marqueeTrack.appendChild(firstCard);
+      const cards = track.querySelectorAll('.card');
+      for (const card of cards) {
+        const rect = card.getBoundingClientRect();
+        if (
+          pointerX >= rect.left &&
+          pointerX <= rect.right &&
+          pointerY >= rect.top &&
+          pointerY <= rect.bottom
+        ) {
+          return true;
+        }
+      }
+      return false;
     }
-    marqueeTrack.style.transform = `translateX(${pos}px)`;
-  }
 
-  requestAnimationFrame(stepMarquee);
-}
+    // Infinite scrolling
+    function animate() {
+      if (!isHoveringCard()) {
+        offset += speed;
+        if (offset >= track.scrollWidth / 2) {
+          offset = 0;
+        }
+      }
+
+      track.style.transform = `translateX(-${offset}px)`;
+      requestAnimationFrame(animate);
+    }
+
+    requestAnimationFrame(animate);
 
   </script>
 
