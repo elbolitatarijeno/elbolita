@@ -205,6 +205,14 @@ transform: translateX(0);
       filter: brightness(1.0);
     }
 
+   /* force-hover replicates whatever your .card:hover rules do */
+    .card.force-hover,
+    .card.force-hover * {
+            /* match your lift */
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2) !important; /* match your shadow */
+    }
+
+
   </style>
 </head>
 <body>
@@ -245,8 +253,10 @@ transform: translateX(0);
       <div class="card"><img src="https://www.shutterstock.com/image-photo/bavaro-punta-cana-dominican-republic-260nw-1527598181.jpg"></div>
       <div class="card"><img src="https://www.shutterstock.com/image-photo/dominican-republic-punta-cana-9-260nw-1596943021.jpg"></div>
     </div>
-
     </div>
+
+<script src="js/app.js"></script>
+
 
   <script>
     document.addEventListener('DOMContentLoaded', () => {
@@ -391,6 +401,37 @@ const marquee = document.getElementById('marquee');
     }
 
     requestAnimationFrame(animate);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    const marquee = document.querySelector('.marquee');
+    const cards = Array.from(marquee.querySelectorAll('.card'));
+    let pointer = { x: -1, y: -1 };
+
+    // track the mouse within the marquee
+    marquee.addEventListener('mousemove', e => {
+      pointer.x = e.clientX;
+      pointer.y = e.clientY;
+    });
+    marquee.addEventListener('mouseleave', () => {
+      pointer.x = pointer.y = -1;
+    });
+    // on each frame, toggle .force-hover if the card drifts under the pointer
+    function simulateHover() {
+      cards.forEach(card => {
+        const r = card.getBoundingClientRect();
+        const over =
+          pointer.x >= r.left &&
+          pointer.x <= r.right &&
+          pointer.y >= r.top &&
+          pointer.y <= r.bottom;
+
+        card.classList.toggle('force-hover', over);
+      });
+      requestAnimationFrame(simulateHover);
+    }
+    simulateHover();
+  });
+
 
   </script>
 
