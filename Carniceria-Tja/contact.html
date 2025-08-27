@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Contact | THE MEAT</title>
+  <link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,700,900,400italic,700italic,900italic|Droid+Serif:400,700,400italic,700italic" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" crossorigin="anonymous" />
+  <style>
+    .map {
+      width: 100%;
+      height: 300px;
+      border: 1px solid #ccc;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="title">
+    <header> THE MEAT </header>
+  </div>
+
+  <div class="navbar">
+    <a href="index.html"> INICIO </a>
+    <a href="menu.html"> MENU </a>
+    <a href="recipe.html"> RECETAS </a>
+    <a href="contact.html"> CONTACTO </a>
+  </div>
+
+  <div class="contact-form">
+    <div class="map-container">
+      <h1> QUEDATE EN CONTACTO </h1>
+      <div class="contact-wrap">
+        <div class="contact-info">
+          <div class="contact1"><i class="fas fa-map-marker-alt"></i><p>La ciudad de Tarija</p></div>
+          <div class="contact2"><i class="fab fa-github"></i><p> https://7rtc5k-ip-177-222-62-20.tunnelmole.net</p></div>
+          <div class="contact3"><i class="fas fa-envelope"></i><p> Panchopacheco3000@gmail.com</p></div>
+        </div>
+        <div class="map" id="map"></div>
+      </div>
+    </div>
+
+    <div class="form-wrapper">
+      <h1> Contact Us</h1>
+      <form id="contact-form">
+        <label for="name">Nombre</label><br>
+        <input type="text" id="name" required><br>
+
+        <label for="email">Gmail</label><br>
+        <input type="email" id="email" required><br>
+
+        <label for="msg">Contactanos</label><br>
+        <textarea id="msg" required></textarea><br>
+
+        <input type="submit" id="contact-btn" value="Send">
+      </form>
+    </div>
+  </div>
+
+  <script src="contact.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap" async defer></script>
+
+</body>
+</html>
