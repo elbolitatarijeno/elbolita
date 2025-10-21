@@ -1,4 +1,4 @@
-<!doctype html>
+sss<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8" />
@@ -245,6 +245,32 @@
       }
     });
 
+    // Touch drag support
+header.addEventListener('touchstart', e => {
+  if (e.touches.length !== 1) return;
+  isDragging = true;
+  const touch = e.touches[0];
+  offsetX = touch.clientX - panel.offsetLeft;
+  offsetY = touch.clientY - panel.offsetTop;
+  document.body.style.userSelect = 'none';
+}, { passive: true });
+
+document.addEventListener('touchmove', e => {
+  if (!isDragging || e.touches.length !== 1) return;
+  const touch = e.touches[0];
+  panel.style.left = `${touch.clientX - offsetX}px`;
+  panel.style.top  = `${touch.clientY - offsetY}px`;
+}, { passive: false });
+
+document.addEventListener('touchend', () => {
+  if (isDragging) {
+    isDragging = false;
+    document.body.style.userSelect = '';
+    savePanelState();
+  }
+});
+
+    
     // Observe size changes and save them
     const ro = new ResizeObserver(debounce(() => {
       editor.setSize('100%', 'calc(100% - 0px)');
@@ -294,4 +320,5 @@
   </script>
 </body>
 </html>
+
 
