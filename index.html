@@ -88,6 +88,11 @@
       src: url('https://elbolitatari.github.io/elbolita/assets/fonts/Spritendo.woff2') format('woff2');
     }
 
+    @media screen and (max-width: 414px) {
+  .divider { display: none; } 
+}
+
+
     .background {
       position: absolute;
       top: 9px;
@@ -246,10 +251,10 @@ transform: translateX(0);
   <div class="first">Victoria Nintendo</div>
   <div class="button" onclick="window.location.href='Code editot.html'"></div>
   <div class="background">
-    <svg width="3" height="100">
+    <svg class="divider" width="3" height="100">
       <line x1="1" y1="1" x2="1" y2="58" stroke="black" stroke-width="2" />
     </svg>
-    <svg width="3" height="100">
+    <svg class="divider" width="3" height="100">
       <line x1="1" y1="1" x2="1" y2="58" stroke="black" stroke-width="2" />
     </svg>
   </div>
@@ -463,6 +468,7 @@ const marquee = document.getElementById('marquee');
 
 </body>
 </html>
+
 
 
 
