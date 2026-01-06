@@ -51,9 +51,12 @@
       background-color: #00c3e9;
       outline: 2px solid white;
       box-shadow: 0 0 0 3px black;
+      justify-content: center;
+      align-items: center;  
+      text-align: center;
       font-family: 'Sprintendo', sans-serif;
       font-size: 44px;
-      font-size: clamp(25px, 8vw, 22px);
+      font-size: clamp(23px, 8vw, 22px);
       color: white;
       transition: background-color 0.1s ease;
       cursor: pointer; 
@@ -252,7 +255,7 @@ transform: translateX(0);
       display: flex;
       flex-shrink: 0;
       box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-      object-fit: fit;   
+      object-fit: contain;   
     }
 .marquee-track .card img {
       width: 100%;
@@ -503,6 +506,7 @@ const marquee = document.getElementById('marquee');
 
 </body>
 </html>
+
 
 
 
