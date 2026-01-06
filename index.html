@@ -43,7 +43,7 @@
       position: absolute;
       left: 13px;
       top: 13px;
-      width: clamp(180px, 87%, 87vw);
+      width: clamp(180px, 85%, 85vw);
       height: 50px;
       border-radius: 10px;
       border-top-left-radius: 0;
@@ -53,7 +53,7 @@
       box-shadow: 0 0 0 3px black;
       font-family: 'Sprintendo', sans-serif;
       font-size: 44px;
-      font-size: clamp(22px, 8vw, 22px);
+      font-size: clamp(25px, 8vw, 22px);
       color: white;
       transition: background-color 0.1s ease;
       cursor: pointer; 
@@ -79,6 +79,24 @@
       transition: background-color 0.1s ease;
       cursor: pointer; 
     }
+    @media screen and (max-width: 430px) {
+    .button {
+      border: 1px solid;
+      position: absolute;
+      right: 12px;
+      top: 13px;
+      width: 6vw;
+      height: 50px;
+      border-radius: 10px;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      background-color: #ff4554;
+      outline: 2px solid white;
+      box-shadow: 0 0 0 3px black;
+      transition: background-color 0.1s ease;
+      cursor: pointer; 
+    }
+}
     .button:hover {
       background-color: black;
     }
@@ -224,6 +242,17 @@ transform: translateX(0);
       display: flex;
       flex-shrink: 0;
       box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    }
+ @media screen and (max-width: 430px) {
+        .card {
+      min-width: 200px;
+      height: 26vh;
+      background: #3498db;
+      color: white;
+      display: flex;
+      flex-shrink: 0;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+      object-fit: fit;   
     }
 .marquee-track .card img {
       width: 100%;
@@ -474,6 +503,7 @@ const marquee = document.getElementById('marquee');
 
 </body>
 </html>
+
 
 
 
