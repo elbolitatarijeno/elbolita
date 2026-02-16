@@ -2,12 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Multicalendar 2026</title>
+  <title>Persistent Calendar with Textareas (Multi-Calendar)</title>
   <style>
     html, body {
       margin: 0;
       height: 100%;
-      font-family: 'Sprintendo', sans-serif;
+      font-family: Arial, sans-serif;
     }
 
     /* Header bar */
@@ -125,7 +125,7 @@
       padding: 8px;
       display: none;
       z-index: 1000;
-      width: 220px;
+      width: 120px;
       max-height: 320px;
       overflow: auto;
     }
@@ -133,7 +133,7 @@
 
     .fab-menu .cal-item {
       display:flex;
-      justify-content:space-between;
+      justify-content:center;
       align-items:center;
       padding: 8px;
       border-radius: 6px;
@@ -193,16 +193,16 @@
 
     // Predefined 10 calendars (you can rename)
     const calendars = [
-      { id: "cal0", name: "Personal" },
-      { id: "cal1", name: "Work" },
-      { id: "cal2", name: "Family" },
-      { id: "cal3", name: "Fitness" },
-      { id: "cal4", name: "Travel" },
-      { id: "cal5", name: "Projects" },
-      { id: "cal6", name: "School" },
-      { id: "cal7", name: "Finance" },
-      { id: "cal8", name: "Hobbies" },
-      { id: "cal9", name: "Archive" }
+      { id: "🏠", name: "Dia a dia" },
+      { id: "🍱", name: "Comidas" },
+      { id: "👨‍👩‍👧‍👦", name: "Familia" },
+      { id: "🎂", name: "Cumpleaños" },
+      { id: "👾", name: "Juegos" },
+      { id: "💼", name: "Proyectos" },
+      { id: "🛸", name: "BRNME" },
+      { id: "lol", name: "IDK" },
+      { id: "F", name: "IDK" },
+      { id: "non", name: "IDK" }
     ];
 
     // Load selected calendar from localStorage or default to first
@@ -336,4 +336,3 @@
   </script>
 </body>
 </html>
-
