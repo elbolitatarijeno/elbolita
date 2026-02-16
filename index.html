@@ -1,530 +1,338 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta charset="UTF-8">
-  <title>Vicpackporu</title>
+  <meta charset="UTF-8" />
+  <title>Persistent Calendar with Textareas (Multi-Calendar)</title>
   <style>
-    * {}
-
-    body {
-      border: 10px solid;
-      width: 100vw;
-      height: 100vh;
+    html, body {
       margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      border-radius: 8px;
-      overflow: hidden;    
-    }
-
-    .first {
-      border: 1px solid black;
-      position: absolute;
-      left: 13px;
-      top: 13px;
-      width: 90vw;
-      height: 50px;
-      border-radius: 10px;
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-      background-color: #00c3e9;
-      outline: 2px solid white;
-      box-shadow: 0 0 0 3px black;
+      height: 100%;
       font-family: 'Sprintendo', sans-serif;
-      font-size: 40px;
-      font-size: clamp(38px, 4vw, 40px);
-      color: white;
-      transition: background-color 0.1s ease;
-    }
-    @media screen and (max-width: 430px) {
-    .first {
-      border: 1px solid black;
-      position: absolute;
-      left: 13px;
-      top: 13px;
-      width: clamp(180px, 85%, 85vw);
-      height: 50px;
-      border-radius: 10px;
-      border-top-left-radius: 0;
-      border-bottom-left-radius: 0;
-      background-color: #00c3e9;
-      outline: 2px solid white;
-      box-shadow: 0 0 0 3px black;
-      justify-content: center;
-      align-items: center;  
-      text-align: center;
-      font-family: 'Sprintendo', sans-serif;
-      font-size: 44px;
-      font-size: clamp(23px, 8vw, 22px);
-      color: white;
-      transition: background-color 0.1s ease;
-      cursor: pointer; 
-    }
-}
-    .first:hover {
-      background-color: black;
     }
 
-    .button {
-      border: 1px solid;
-      position: absolute;
-      right: 12px;
-      top: 13px;
-      width: 2vw;
-      height: 50px;
-      border-radius: 10px;
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-      background-color: #ff4554;
-      outline: 2px solid white;
-      box-shadow: 0 0 0 3px black;
-      transition: background-color 0.1s ease;
-      cursor: pointer; 
-    }
-    @media screen and (max-width: 430px) {
-    .button {
-      border: 1px solid;
-      position: absolute;
-      right: 12px;
-      top: 13px;
-      width: 6vw;
-      height: 50px;
-      border-radius: 10px;
-      border-top-right-radius: 0;
-      border-bottom-right-radius: 0;
-      background-color: #ff4554;
-      outline: 2px solid white;
-      box-shadow: 0 0 0 3px black;
-      transition: background-color 0.1s ease;
-      cursor: pointer; 
-    }
-}
-    .button:hover {
-      background-color: black;
-    }
-
-    @font-face {
-      font-family: 'Sprintendo';
-      src: url('https://elbolitatari.github.io/elbolita/assets/fonts/Spritendo.woff2') format('woff2');
-    }
-
-    @media screen and (max-width: 430px) {
-  .divider { display: none; } 
-}
-
-
-    .background {
-      position: absolute;
-      top: 9px;
-      right: 4.3vw;
-      height: 56px;
-      width: calc(0.1px + 2.9vw);
-      text-align: center;
-    }
-
-    .buton-container {
-      display: grid;
-      grid-template-columns: 30px 30px 30px;
-      grid-template-rows: 30px 30px 30px;
-      gap: 1px;
-      position: absolute;
-      right: 2.6vh;
-      bottom: 2.6vh;
-      transition: bottom 0.4s ease;
-      z-index: 1001;
-    }
-    .buton-container.shifted {
-      bottom: calc(2.6vh + 162px);
-    }
-    .buton {
-      width: 35px;
-      height: 35px;
-      border-radius: 50%;
-      font-size: 15px;
-      font-weight: bold;
-      color: white;
-      border: none;
-      cursor: pointer;
+    /* Header bar */
+    .header {
+      height: 15px;
+      background: black;
+      color: #fff;
       display: flex;
-      justify-content: center;
       align-items: center;
-      box-shadow: 4px 4px 10px rgba(0, 0, 0, 0.5);
-      transition: filter 0.1s ease;
+      justify-content: space-between;
+      padding: 0 10px;
+      font-weight: bold;
+      cursor: pointer;
     }
-    .x { background-color: black; grid-column: 1 / 2; grid-row: 2 / 3; }
-    .y { background-color: black; grid-column: 2 / 3; grid-row: 1 / 2; }
-    .a { background-color: black; grid-column: 2 / 3; grid-row: 3 / 4; }
-    .b { background-color: black; grid-column: 3 / 4; grid-row: 2 / 3; }
-
-    .buton:hover {
-      filter: invert(100%);
+    .header button {
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 12px;
+      cursor: pointer;
     }
-
-    .buton.active {
-      background-color: lightgrey;
-      color: #000;
+    .header .title {
+      display:flex;
+      gap:4px;
+      align-items:center;
+      font-size:14px;
     }
-
-    #popup-card {
-      position: fixed;
-      top: 50px;
-      right: 12px;
-      min-width: 20vw;
-      padding: 1px;
-      background: #fff;
-      border-radius: 6px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-      display: none;
-      z-index: 999;
-      font-family: sans-serif;
-      text-align: center;
-      height: 37vh;
-    }
-    #popup-card.open {
-      display: block;
+    .header .calendar-name {
+      font-weight: normal;
+      font-size: 10px;
+      opacity: 0.9;
     }
 
-    /* bottom bar & slider styles */
-    #bottom-bar {
-      position: absolute;
-      bottom: 1px;
-      left: 0;
-      width: 100vw;
+    /* Weekday bar */
+    .weekdays {
       height: 10px;
-      background-color: black;
+      background: #eaeaea;
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      text-align: center;
+      font-size: 10px;
+      line-height: 10px;
+      border-bottom: 1px solid #ccc;
+    }
+
+    /* Calendar grid fills remaining viewport */
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-auto-rows: 1fr;
+      height: calc(106.3% - 64px); /* header + weekday bar */
+    }
+
+    .day {
+      border: 1px solid #ddd;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .day-label {
+      flex: 0 0 1px; /* CHECK THIS GREYBUG */
+      background: #f4f4f4;
+      font-size: 8px;
+      padding: 1px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .day textarea {
+      flex: 1;
+      width: 100%;
+      border: none;
+      resize: none;
+      padding: 1px;
+      font-size: 10px;
+      outline: none;
+      box-sizing: border-box;
+      overflow: hidden;
+      background: transparent;
+    }
+
+    .today {
+      background: black;
+      color: #fff;
+      font-weight: bold;
+    }
+
+    /* Floating button */
+    .fab {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #171a21;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.25);
       cursor: pointer;
       z-index: 1000;
-      transition: border 0.2s ease;
-    }
-      #bottom-bar:hover {
-      border: 1px solid white;
-    }
-    #slider-panel {
-      position: absolute;
-      bottom: -200px;
-      left: 0;
-      width: 100vw;
-      height: 163px;
-      background-color: #222;
-      transition: bottom 0.4s ease;
-      z-index: 999;
-      color: white;
-      font-family: sans-serif;
-      text-align: center;
-      padding-top: 1px;
-      box-sizing: border-box;
-      font-family: 'Sprintendo', sans-serif;
-      font-size: 15px;
-    }
-    #slider-panel.open {
-      bottom: 10px; /* sits just above the bottom bar */
     }
 
- .marquee {
-      position: absolute;
-      bottom: 13px;           
-      left: 11px;
-      right: 11px;
-      height: 160px;
-      overflow: hidden;
-      z-index: 998;
+    /* Calendar menu */
+    .fab-menu {
+      position: fixed;
+      right: 18px;
+      bottom: 55px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.15);
+      padding: 8px;
+      display: none;
+      z-index: 1000;
+      width: 220px;
+      max-height: 320px;
+      overflow: auto;
     }
+    .fab-menu.show { display: block; }
 
-    .marquee-track {
-      display: flex;
-      gap: 40px;
-transform: translateX(0);
+    .fab-menu .cal-item {
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding: 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
     }
+    .fab-menu .cal-item:hover { background: #c7d5e0; }
+    .fab-menu .cal-item.active { background: #2a475e; color: #fff; }
 
-    .card {
-      min-width: 200px;
-      height: 155px;
-      background: #3498db;
-      color: white;
-      display: flex;
-      flex-shrink: 0;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+    /* small label for month */
+    #monthYear {
+      transition: color 0.3s ease;
+      cursor: pointer;
     }
- @media screen and (max-width: 430px) {
-      .card {
-      min-width: 200px;
-      height: 22vh;
-      background: #3498db;
-      color: white;
-      display: flex;
-      flex-shrink: 0;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-    }
-.marquee-track .card img {
-      width: 100%;
-      height: 100%;
-      object-fit: fill;
-    }
-   @media screen and (max-width: 430px) {
-     .marquee-track .card img {
-      width: 100%;
-      height: 100%;
-      object-fit: fill;
-    }
-   }
-   .marquee-track .card:hover {
-      opacity: 0.7;
-      filter: brightness(1.0);
-    }
-   /* force-hover replicates whatever your .card:hover rules do */
-    .card.force-hover,
-    .card.force-hover * {
-            /* match your lift */
-      box-shadow: 0 10px 20px rgba(0,0,0,0.2) !important; /* match your shadow */
+    #monthYear:hover { color: #ddd; }
+
+    /* responsive tweaks */
+    @media (max-width: 600px) {
+      .fab-menu { width: 180px; }
     }
   </style>
 </head>
 <body>
-
-  <div class="first">Victoria Nintendo</div>
-  <div class="button" onclick="window.location.href='Code editot.html'"></div>
-  <div class="background">
-    <svg class="divider" width="3" height="100">
-      <line x1="1" y1="1" x2="1" y2="58" stroke="black" stroke-width="2" />
-    </svg>
-    <svg class="divider" width="3" height="100">
-      <line x1="1" y1="1" x2="1" y2="58" stroke="black" stroke-width="2" />
-    </svg>
-  </div>
-
-  <div class="buton-container">
-    <button class="buton y">Y</button>
-    <button class="buton x">X</button>
-    <button class="buton a">A</button>
-    <button class="buton b">B</button>
-  </div>
-
-  <!-- slider panel & bottom bar -->
-  <div id="slider-panel">
-    <p>Here’s your slider content.</p>
-  </div>
-  <div id="bottom-bar"></div>
-
-  <div class="marquee" id="marquee">
-    <div class="marquee-track" id="track">
- <div class="card"><img src="https://www.shutterstock.com/image-photo/view-bavaro-beach-punta-cana-260nw-2445326985.jpg"></div>
-      <div class="card"><img src="https://www.shutterstock.com/image-photo/bavaro-punta-cana-dominican-republic-600w-2220607533.jpg"></div>
-      <div class="card"><img src="https://media.istockphoto.com/id/1418736696/vector/retro-greeting-card-souvenir-sign-from-exotic-destination.jpg?s=1024x1024&w=is&k=20&c=2W9wMptzmBfpxp1fpK3TSph-daosfNK5m8-FFPSPxks=""></div>
-      <div class="card"><img src="https://www.shutterstock.com/image-photo/tropical-beach-resorts-palm-trees-600w-2415287839.jpg"></div>
-      <!-- duplicate for smooth loop -->
-      <div class="card"><img src="https://www.shutterstock.com/image-photo/dominican-republic-19-february-2022-600w-2225886507.jpg"></div>
-      <div class="card"><img src="https://www.shutterstock.com/image-vector/dominican-republic-260nw-268350248.jpg"></div>
-      <div class="card"><img src="https://www.shutterstock.com/image-photo/bavaro-punta-cana-dominican-republic-260nw-1527598181.jpg"></div>
-      <div class="card"><img src="https://www.shutterstock.com/image-photo/dominican-republic-punta-cana-9-260nw-1596943021.jpg"></div>
+  <div class="header">
+    <button id="prev">&#9664;</button>
+    <div class="title">
+      <div id="monthYear"></div>
+      <div class="calendar-name" id="currentCalendarName"></div>
     </div>
-    </div>
+    <button id="next">&#9654;</button>
+  </div>
 
-<script src="js/app.js"></script>
+  <div class="weekdays">
+    <div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div>
+    <div>Thu</div><div>Fri</div><div>Sat</div>
+  </div>
 
+  <div class="calendar" id="calendar"></div>
+
+  <!-- Floating action button -->
+  <div class="fab" id="fab">☰</div>
+
+  <!-- Menu with 10 calendars -->
+  <div class="fab-menu" id="fabMenu" role="menu" aria-hidden="true"></div>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // existing popup-card logic
-      const card = document.createElement('div');
-      card.id = 'popup-card';
-      document.body.appendChild(card);
-      card.addEventListener('click', e => e.stopPropagation());
-      let currentButton = null, pendingButton = null;
-      function getTargetPosition() {
-        const w = card.offsetWidth;
-        return {
-          targetX: window.innerWidth - 10 - w,
-          targetY: 50
-        };
-      }
-      function getButtonCenter(b) {
-        const r = b.getBoundingClientRect();
-        return { centerX: r.left + r.width/2, centerY: r.top + r.height/2 };
-      }
-      function openCard(btn) {
-        currentButton = btn;
-        card.textContent = `🔖 Card for “${btn.textContent}”`;
-        const { targetX, targetY } = getTargetPosition();
-        const { centerX, centerY } = getButtonCenter(btn);
-        const dx = centerX - targetX, dy = centerY - targetY;
-        card.style.transition = 'none';
-        card.style.transform = `translate(${dx}px, ${dy}px)`;
-        card.style.opacity = '0';
-        card.classList.add('open');
-        card.offsetHeight;
-        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        setTimeout(() => {
-          card.style.transform = '';
-          card.style.opacity = '1';
-        }, 0);
-      }
-      function closeCard(cb) {
-        const { targetX, targetY } = getTargetPosition();
-        let dx = 0, dy = 20;
-        if (currentButton) {
-          const { centerX, centerY } = getButtonCenter(currentButton);
-          dx = centerX - targetX;
-          dy = centerY - targetY;
-        }
-        card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-        card.style.transform = `translate(${dx}px, ${dy}px)`;
-        card.style.opacity = '0';
-        card.addEventListener('transitionend', function h(e) {
-          if (e.propertyName === 'opacity') {
-            card.classList.remove('open');
-            card.style.transform = '';
-            if (cb) cb();
-          }
-        }, { once: true });
-      }
-      document.querySelectorAll('.buton').forEach(btn => {
-        btn.addEventListener('click', e => {
-          e.stopPropagation();
-          if (currentButton === btn && card.classList.contains('open')) {
-            btn.classList.remove('active');
-            closeCard(() => currentButton = null);
-            return;
-          }
-          if (card.classList.contains('open')) {
-            pendingButton = btn;
-            closeCard(() => {
-              document.querySelectorAll('.buton.active').forEach(b => b.classList.remove('active'));
-              openCard(pendingButton);
-              pendingButton.classList.add('active');
-              pendingButton = null;
-            });
-          } else {
-            openCard(btn);
-            btn.classList.add('active');
-          }
+    const monthYear = document.getElementById("monthYear");
+    const currentCalendarName = document.getElementById("currentCalendarName");
+    const calendar = document.getElementById("calendar");
+    const prevBtn = document.getElementById("prev");
+    const nextBtn = document.getElementById("next");
+    const fab = document.getElementById("fab");
+    const fabMenu = document.getElementById("fabMenu");
+
+    const today = new Date();
+    let date = new Date(today);
+
+    // Predefined 10 calendars (you can rename)
+    const calendars = [
+      { id: "cal0", name: "Personal" },
+      { id: "cal1", name: "Work" },
+      { id: "cal2", name: "Family" },
+      { id: "cal3", name: "Fitness" },
+      { id: "cal4", name: "Travel" },
+      { id: "cal5", name: "Projects" },
+      { id: "cal6", name: "School" },
+      { id: "cal7", name: "Finance" },
+      { id: "cal8", name: "Hobbies" },
+      { id: "cal9", name: "Archive" }
+    ];
+
+    // Load selected calendar from localStorage or default to first
+    let selectedCalendarId = localStorage.getItem("selectedCalendarId") || calendars[0].id;
+
+    function buildFabMenu() {
+      fabMenu.innerHTML = "";
+      calendars.forEach(cal => {
+        const item = document.createElement("div");
+        item.className = "cal-item";
+        if (cal.id === selectedCalendarId) item.classList.add("active");
+        item.textContent = cal.name;
+        const badge = document.createElement("span");
+        badge.style.fontSize = "11px";
+        badge.style.opacity = "0.9";
+        badge.textContent = cal.id;
+        item.appendChild(badge);
+        item.addEventListener("click", () => {
+          selectedCalendarId = cal.id;
+          localStorage.setItem("selectedCalendarId", selectedCalendarId);
+          fabMenu.classList.remove("show");
+          renderCalendar();
         });
+        fabMenu.appendChild(item);
       });
+    }
 
-      // slider-panel + pushing buttons up
-      const bottomBar = document.getElementById('bottom-bar');
-      const sliderPanel = document.getElementById('slider-panel');
-      const btnContainer = document.querySelector('.buton-container');
+    function renderCalendar() {
+      const year = date.getFullYear();
+      const month = date.getMonth();
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-      bottomBar.addEventListener('click', () => {
-        sliderPanel.classList.toggle('open');
-        btnContainer.classList.toggle('shifted');
-      });
-    });
+      const calObj = calendars.find(c => c.id === selectedCalendarId) || calendars[0];
+      monthYear.textContent = date.toLocaleString("default", { month: "long" }) + " " + year;
+      currentCalendarName.textContent = calObj.name;
 
-const marquee = document.getElementById('marquee');
-    const track = document.getElementById('track');
+      calendar.innerHTML = "";
 
-    // Clone all original cards once for the looping illusion
-    track.innerHTML += track.innerHTML;
+      // Empty cells before first day
+      for (let i = 0; i < firstDay; i++) {
+        const emptyCell = document.createElement("div");
+        emptyCell.className = "day";
+        calendar.appendChild(emptyCell);
+      }
 
-    let offset = 0;
-    const speed = 2; // Pixels per frame
-    let pointerX = null;
-    let pointerY = null;
+      // Days
+      for (let day = 1; day <= daysInMonth; day++) {
+        const cell = document.createElement("div");
+        cell.className = "day";
 
-    // Hover detection
-    marquee.addEventListener('mousemove', (e) => {
-      pointerX = e.clientX;
-      pointerY = e.clientY;
-    });
+        const label = document.createElement("div");
+        label.className = "day-label";
+        label.textContent = day;
 
-    marquee.addEventListener('mouseleave', () => {
-      pointerX = null;
-      pointerY = null;
-    });
-
-    function isHoveringCard() {
-      if (pointerX === null || pointerY === null) return false;
-
-      const cards = track.querySelectorAll('.card');
-      for (const card of cards) {
-        const rect = card.getBoundingClientRect();
+        // Highlight today
         if (
-          pointerX >= rect.left &&
-          pointerX <= rect.right &&
-          pointerY >= rect.top &&
-          pointerY <= rect.bottom
+          day === today.getDate() &&
+          month === today.getMonth() &&
+          year === today.getFullYear()
         ) {
-          return true;
+          label.classList.add("today");
         }
+
+        const textarea = document.createElement("textarea");
+        const key = `${selectedCalendarId}|${year}-${month}-${day}`;
+
+        // Load saved note
+        textarea.value = localStorage.getItem(key) || "";
+
+        // Save on input (debounce to reduce writes)
+        let saveTimer = null;
+        textarea.addEventListener("input", () => {
+          clearTimeout(saveTimer);
+          saveTimer = setTimeout(() => {
+            localStorage.setItem(key, textarea.value);
+          }, 300);
+        });
+
+        cell.appendChild(label);
+        cell.appendChild(textarea);
+        calendar.appendChild(cell);
       }
-      return false;
+
+      // Rebuild menu to update active state
+      buildFabMenu();
     }
 
-    // Infinite scrolling
-    function animate() {
-      if (!isHoveringCard()) {
-        offset += speed;
-        if (offset >= track.scrollWidth / 2) {
-          offset = 0;
-        }
+    prevBtn.addEventListener("click", () => {
+      date.setMonth(date.getMonth() - 1);
+      renderCalendar();
+    });
+
+    nextBtn.addEventListener("click", () => {
+      date.setMonth(date.getMonth() + 1);
+      renderCalendar();
+    });
+
+    // Click month label to jump back to today
+    monthYear.addEventListener("click", () => {
+      date = new Date(today);
+      renderCalendar();
+    });
+
+    // FAB toggle
+    fab.addEventListener("click", (e) => {
+      e.stopPropagation();
+      fabMenu.classList.toggle("show");
+      fabMenu.setAttribute("aria-hidden", fabMenu.classList.contains("show") ? "false" : "true");
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener("click", (e) => {
+      if (!fabMenu.contains(e.target) && e.target !== fab) {
+        fabMenu.classList.remove("show");
+        fabMenu.setAttribute("aria-hidden", "true");
       }
-
-      track.style.transform = `translateX(-${offset}px)`;
-      requestAnimationFrame(animate);
-    }
-
-    requestAnimationFrame(animate);
-
-  document.addEventListener('DOMContentLoaded', () => {
-    const marquee = document.querySelector('.marquee');
-    const cards = Array.from(marquee.querySelectorAll('.card'));
-    let pointer = { x: -1, y: -1 };
-
-    // track the mouse within the marquee
-    marquee.addEventListener('mousemove', e => {
-      pointer.x = e.clientX;
-      pointer.y = e.clientY;
     });
-    marquee.addEventListener('mouseleave', () => {
-      pointer.x = pointer.y = -1;
+
+    // Keyboard: Esc closes menu
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") {
+        fabMenu.classList.remove("show");
+        fabMenu.setAttribute("aria-hidden", "true");
+      }
     });
-    // on each frame, toggle .force-hover if the card drifts under the pointer
-    function simulateHover() {
-      cards.forEach(card => {
-        const r = card.getBoundingClientRect();
-        const over =
-          pointer.x >= r.left &&
-          pointer.x <= r.right &&
-          pointer.y >= r.top &&
-          pointer.y <= r.bottom;
 
-        card.classList.toggle('force-hover', over);
-      });
-      requestAnimationFrame(simulateHover);
-    }
-    simulateHover();
-  });
-
-
+    // Initialize
+    buildFabMenu();
+    renderCalendar();
   </script>
-
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
