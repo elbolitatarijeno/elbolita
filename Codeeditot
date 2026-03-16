@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="utf-8" />
+  <title>Tu mejor editor</title>
+
+  <!-- CodeMirror CSS -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/codemirror.min.css" />
+
+  <style>
+    html, body {
+      margin: 0;
+      height: 100%;
+      overflow: hidden;
+      font-family: sans-serif;
+    }
+
+    /* Full-window live preview */
+    #preview {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      border: none;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Floating editor panel */
+    #editor {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      width: 400px;
+      height: 300px;
+      background: #f7f7f7;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      resize: both;
+      overflow: hidden;
+      min-width: 240px;
+      min-height: 120px;
+    }
+
+    /* Header with drag handle + Save button */
+    #editor-header {
+      background: #e2e2e2;
+      padding: 6px 10px;
+      cursor: move;
+      user-select: none;
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+    #editor-header .left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1;
+    }
+    #editor-header button {
+      background: #4caf50;
+      color: #fff;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    #editor-header .secondary {
+      background: #1976d2;
+    }
+    #editor-header .danger {
+      background: #e53935;
+    }
+
+    /* CodeMirror container */
+    .CodeMirror {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Editor Panel -->
+  <div id="editor" role="dialog" aria-label="Floating editor">
+    <div id="editor-header">
+      <div class="left">
+        <span>Drag & Resize</span>
+      </div>
+      <button id="saveBtn">Save</button>
+      <button id="resetBtn" class="danger" title="Reset saved state">Reset</button>
+      <button id="homeBtn" class="secondary" title="Open index">🏠</button>
+    </div>
+    <textarea id="code">
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    h1 { color: teal; }
+  </style>
+</head>
+<body>
+  <h1>Hello World</h1>
+  <script>
+    console.log('Hello from JS');
+  </script>
+</body>
+</html>
+    </textarea>
+  </div>
+
+  <!-- Live Preview -->
+  <iframe id="preview" sandbox="allow-scripts allow-same-origin"></iframe>
+
+  <!-- CodeMirror JS + Modes -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/mode/htmlmixed/htmlmixed.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/addon/edit/closetag.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.9/addon/edit/closebrackets.min.js"></script>
+
+  <script>
+    // Keys used in localStorage
+    const LS_KEYS = {
+      code: 'floatingEditor.savedCode.v1',
+      panel: 'floatingEditor.panelState.v1'
+    };
+
+    // Initialize CodeMirror with line wrapping enabled
+    const textarea = document.getElementById('code');
+    const editor = CodeMirror.fromTextArea(textarea, {
+      mode: 'htmlmixed',
+      lineNumbers: true,
+      lineWrapping: true,          // <-- enable word wrap
+      autoCloseTags: true,
+      autoCloseBrackets: true,
+      theme: 'default'
+    });
+
+    // Helper: debounce
+    function debounce(fn, wait) {
+      let t;
+      return (...args) => {
+        clearTimeout(t);
+        t = setTimeout(() => fn.apply(this, args), wait);
+      };
+    }
+
+    // Load saved code if present
+    const savedCode = localStorage.getItem(LS_KEYS.code);
+    if (savedCode) editor.setValue(savedCode);
+
+    // Live render into the iframe
+    const preview = document.getElementById('preview');
+    function updatePreview() {
+      const src = editor.getValue();
+      preview.srcdoc = src;
+    }
+    const debouncedPreview = debounce(updatePreview, 150);
+    editor.on('change', debouncedPreview);
+    window.addEventListener('load', updatePreview);
+
+    // Autosave on change (debounced)
+    const AUTOSAVE_DELAY = 800;
+    const autosave = debounce(() => {
+      localStorage.setItem(LS_KEYS.code, editor.getValue());
+      flashSaveButton('Saved');
+    }, AUTOSAVE_DELAY);
+    editor.on('change', autosave);
+
+    // Save button logic (explicit save)
+    const saveBtn = document.getElementById('saveBtn');
+    function flashSaveButton(text = 'Saved', ms = 900) {
+      const prev = saveBtn.textContent;
+      saveBtn.textContent = text;
+      saveBtn.disabled = true;
+      setTimeout(() => {
+        saveBtn.textContent = 'Save';
+        saveBtn.disabled = false;
+      }, ms);
+    }
+    saveBtn.addEventListener('click', () => {
+      localStorage.setItem(LS_KEYS.code, editor.getValue());
+      flashSaveButton('Saved!');
+    });
+
+    // Panel position + size persistence
+    const panel = document.getElementById('editor');
+    const header = document.getElementById('editor-header');
+
+    function savePanelState() {
+      const rect = panel.getBoundingClientRect();
+      const state = {
+        left: rect.left,
+        top: rect.top,
+        width: rect.width,
+        height: rect.height
+      };
+      localStorage.setItem(LS_KEYS.panel, JSON.stringify(state));
+    }
+    function restorePanelState() {
+      const raw = localStorage.getItem(LS_KEYS.panel);
+      if (!raw) return;
+      try {
+        const s = JSON.parse(raw);
+        const vw = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
+        const vh = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
+        const left = Math.min(Math.max(0, s.left), Math.max(0, vw - Math.min(s.width, vw)));
+        const top  = Math.min(Math.max(0, s.top), Math.max(0, vh - Math.min(s.height, vh)));
+        panel.style.left = left + 'px';
+        panel.style.top  = top + 'px';
+        panel.style.width  = Math.min(s.width, vw) + 'px';
+        panel.style.height = Math.min(s.height, vh) + 'px';
+      } catch (e) {
+        console.error('Failed to parse panel state', e);
+      }
+    }
+    restorePanelState();
+
+    // Save position while dragging, and save size on resize
+    let offsetX, offsetY, isDragging = false;
+    header.addEventListener('mousedown', e => {
+      isDragging = true;
+      offsetX = e.clientX - panel.offsetLeft;
+      offsetY = e.clientY - panel.offsetTop;
+      document.body.style.userSelect = 'none';
+    });
+    document.addEventListener('mousemove', e => {
+      if (!isDragging) return;
+      panel.style.left = `${e.clientX - offsetX}px`;
+      panel.style.top  = `${e.clientY - offsetY}px`;
+    });
+    document.addEventListener('mouseup', () => {
+      if (isDragging) {
+        isDragging = false;
+        document.body.style.userSelect = '';
+        savePanelState();
+      }
+    });
+
+    // Touch drag support
+header.addEventListener('touchstart', e => {
+  if (e.touches.length !== 1) return;
+  isDragging = true;
+  const touch = e.touches[0];
+  offsetX = touch.clientX - panel.offsetLeft;
+  offsetY = touch.clientY - panel.offsetTop;
+  document.body.style.userSelect = 'none';
+}, { passive: true });
+
+document.addEventListener('touchmove', e => {
+  if (!isDragging || e.touches.length !== 1) return;
+  const touch = e.touches[0];
+  panel.style.left = `${touch.clientX - offsetX}px`;
+  panel.style.top  = `${touch.clientY - offsetY}px`;
+}, { passive: false });
+
+document.addEventListener('touchend', () => {
+  if (isDragging) {
+    isDragging = false;
+    document.body.style.userSelect = '';
+    savePanelState();
+  }
+});
+
+    
+    // Observe size changes and save them
+    const ro = new ResizeObserver(debounce(() => {
+      editor.setSize('100%', 'calc(100% - 0px)');
+      savePanelState();
+    }, 120));
+    ro.observe(panel);
+
+    // Reset saved state
+    const resetBtn = document.getElementById('resetBtn');
+    resetBtn.addEventListener('click', () => {
+      localStorage.removeItem(LS_KEYS.code);
+      localStorage.removeItem(LS_KEYS.panel);
+      panel.style.left = '20px';
+      panel.style.top  = '20px';
+      panel.style.width  = '400px';
+      panel.style.height = '300px';
+      editor.setValue(textarea.value.trim());
+      updatePreview();
+      flashSaveButton('Reset', 1000);
+    });
+
+    // Home button
+    const homeBtn = document.getElementById('homeBtn');
+    homeBtn.addEventListener('click', () => {
+      window.location.href = 'index.html';
+    });
+
+    // Ensure editor fills the panel immediately
+    setTimeout(() => editor.setSize('100%', 'calc(100% - 0px)'), 50);
+
+    // Accessibility: keyboard move (arrow keys with modifier)
+    panel.tabIndex = 0;
+    panel.addEventListener('keydown', e => {
+      if (!e.altKey) return;
+      const step = e.shiftKey ? 20 : 5;
+      if (e.key === 'ArrowLeft') { panel.style.left = (panel.offsetLeft - step) + 'px'; e.preventDefault(); }
+      if (e.key === 'ArrowRight') { panel.style.left = (panel.offsetLeft + step) + 'px'; e.preventDefault(); }
+      if (e.key === 'ArrowUp') { panel.style.top = (panel.offsetTop - step) + 'px'; e.preventDefault(); }
+      if (e.key === 'ArrowDown') { panel.style.top = (panel.offsetTop + step) + 'px'; e.preventDefault(); }
+      savePanelState();
+    });
+
+    // Final safety: keep preview updated on visibility changes
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') updatePreview();
+    });
+  </script>
+</body>
+</html>
+
+
+
+
