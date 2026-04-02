@@ -155,17 +155,26 @@
       .fab-menu { width: 180px; }
     }
 
- .links {position: absolute; padding: 10px; font-size: 10px;}
+  .links {position: absolute; padding: 10px; font-size: 10px;}
 
 .links:nth-of-type(1) {
-  top: 575px;
-  left: 530px;
+ bottom: 15px;
+  right: 140px;
 }
 .links:nth-of-type(2) {
-  top: 575px;
-  left: 440px;
+ bottom: 15px;
+  right: 50px;
 }
-    
+@media (max-width: 1000px) {
+  .links:nth-of-type(1) {
+       bottom: 15px;
+       right: 140px;
+  }
+  .links:nth-of-type(2) {
+ bottom: 15px;
+  right: 50px;
+  }
+}
   </style>
 </head>
 <body>
